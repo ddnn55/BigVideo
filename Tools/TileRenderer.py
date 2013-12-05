@@ -17,6 +17,12 @@ class TileRenderer:
 		print canvas.size
 		print grid_size
 
+		max_zoom = 0
+		while pow(2, max_zoom) < max(grid_size):
+			max_zoom = max_zoom + 1
+
+		print max_zoom
+
 if __name__ == '__main__':
 	canvas = Canvas()
 	canvas.CreateSimpleSourceLayout("source_video_tiles_sequences", (3, 14))
