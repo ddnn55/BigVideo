@@ -25,6 +25,8 @@ class Canvas:
 		
 		source_tile_names = filter(lambda f: f != ".DS_Store", os.listdir(source_tile_image_sequences_dir))
 		
+		self.size = (0, 0)
+
 		self.source_tiles = []
 		for c in range(0, size[0]):
 			for r in range(0, size[1]):
@@ -37,10 +39,13 @@ class Canvas:
 				y = r * source_tile.height
 
 				source_tile.pos = (x, y)
+
+				self.size = (max(self.size[0], x + source_tile.width), max(self.size[1], y + source_tile.height))
 				
 				self.source_tiles.append(source_tile)
 
-		print([str(tile) for tile in self.source_tiles])
+
+		#print([str(tile) for tile in self.source_tiles])
 
 
 	def SourceTilesInBounds(self, bounds):
