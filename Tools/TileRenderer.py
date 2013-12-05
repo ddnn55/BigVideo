@@ -13,15 +13,23 @@ class TileRenderer:
 	def RenderTiles(self, output_xyz_image_sequences_dir):
 		print "Rendering tiles..."
 		
-		grid_size = (canvas.size[0] / TILE_SIZE, canvas.size[1] / TILE_SIZE)
+		self.grid_size = (canvas.size[0] / TILE_SIZE, canvas.size[1] / TILE_SIZE)
 		print canvas.size
-		print grid_size
+		print self.grid_size
 
-		max_zoom = 0
-		while pow(2, max_zoom) < max(grid_size):
-			max_zoom = max_zoom + 1
+		self.max_zoom = 0
+		while pow(2, self.max_zoom) < max(self.grid_size):
+			self.max_zoom = self.max_zoom + 1
+		
+		self.RenderBaseTiles()
 
-		print max_zoom
+	def RenderBaseTiles(self):
+		print "Rendering base tiles with max zoom: " + str(self.max_zoom)
+		for c in range(0, self.grid_size[0]):
+			for r in range(0, self.grid_size[1]):
+				print "Rendering base tile " + str((c, r))
+
+
 
 if __name__ == '__main__':
 	canvas = Canvas()
