@@ -8,11 +8,11 @@ import subprocess
 source_dir = "source_video_tiles"
 destination_dir = "source_video_tiles_sequences"
 
-source_filenames = filter(lambda f: f != ".DS_Store", os.listdir(source_dir))
-
 def ensure_dir(path):
 	if not os.path.exists(path):
 		os.makedirs(path)
+
+source_filenames = filter(lambda f: f != ".DS_Store", os.listdir(source_dir))
 
 for source_filename in source_filenames:
 	basename = os.path.splitext(source_filename)[0]
