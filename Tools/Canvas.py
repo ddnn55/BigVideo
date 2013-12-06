@@ -9,10 +9,10 @@ from geometry import Point, Rect
 class SourceTile:
 
 	def __init__(self, path):
-		first_frame_image = Image.open(path + "/00001.jpg")
+		self.first_frame = Image.open(path + "/00001.jpg")
 		
-		self.width  = first_frame_image.size[0]
-		self.height = first_frame_image.size[1]
+		self.width  = self.first_frame.size[0]
+		self.height = self.first_frame.size[1]
 
 		self.path = path
 
