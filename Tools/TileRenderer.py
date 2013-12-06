@@ -44,15 +44,15 @@ class TileRenderer:
 				tile_image = Image.new("RGBA", (TILE_SIZE * 2, TILE_SIZE * 2))
 
 				for source_tile in source_tiles:
-					source_tile_render_pos = source_tile.pos - source_pos
-					tile_image.paste(source_tile.first_frame, source_tile_render_pos.as_tuple())
+					source_tile_render_pos = source_tile.bounds.top_left() - source_pos
+					tile_image.paste(source_tile.first_frame(), source_tile_render_pos.as_tuple())
 
-				tile_image.resize((TILE_SIZE, TILE_SIZE), filter=Image.ANTIALIAS)
+				tile_image.resize((TILE_SIZE, TILE_SIZE), resample=Image.ANTIALIAS)
 
 				tile_dir = base_dir + "/" + str(c) + "/" + str(r)
 				util.ensure_dir(tile_dir)
 				path = tile_dir + "/0.jpg"
-				base_tile_image.save(path)
+				tile_image.save(path)
 
 		if z > 0:
 			self.RenderTilesForAllZoomLevelsUpTo(z - 1, tile_set)
@@ -93,7 +93,7 @@ class TileRenderer:
 				path = tile_dir + "/0.jpg"
 				base_tile_image.save(path)
 
-				tile_set.append(RenderTile(path, pixel_bounds))
+				tile_set.append(RenderTile(tile_dir, pixel_bounds))
 
 				print
 

@@ -32,6 +32,9 @@ class RenderTile:
 	def __str__(self):
 		return str(self.bounds) + ": " + self.path
 
+	def first_frame(self):
+		return Image.open(self.path + "/0.jpg")
+
 class RenderTileSet:
 
 	def __init__(self):
@@ -46,6 +49,9 @@ class RenderTileSet:
 		self.tiles.append(tile)
 		self.columns = max(self.columns, tile.bounds.bottom_right().x / TILE_SIZE)
 		self.rows = max(self.rows, tile.bounds.bottom_right().y / TILE_SIZE)
+
+	def TilesInBounds(self, bounds):
+		return filter(lambda t: t.bounds.overlaps(bounds), self.tiles)
 
 
 class Canvas:
