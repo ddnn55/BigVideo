@@ -26,6 +26,15 @@ class TileRenderer:
 			self.max_zoom = self.max_zoom + 1
 		
 		self.RenderBaseTiles()
+		z = self.max_zoom - 1
+		while z >= 0:
+
+			self.RenderTilesForZoomLevel(z)
+
+			z = z - 1
+
+	def RenderTilesForZoomLevel(self, z):
+		print "Rendering tiles for zoom level " + str(z)
 
 	def RenderBaseTiles(self):
 		print "Rendering base tiles with max zoom: " + str(self.max_zoom)
