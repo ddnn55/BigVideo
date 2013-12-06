@@ -2,6 +2,8 @@
 
 import os
 from PIL import Image
+import util
+
 
 class SourceTile:
 
@@ -47,9 +49,8 @@ class Canvas:
 
 		#print([str(tile) for tile in self.source_tiles])
 
-
 	def SourceTilesInBounds(self, bounds):
-		pass
+		return filter(lambda t: intersects(t.bounds(), bounds), self.source_tiles)
 
 if __name__ == '__main__':
 	canvas = Canvas()

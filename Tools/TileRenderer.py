@@ -27,7 +27,23 @@ class TileRenderer:
 		print "Rendering base tiles with max zoom: " + str(self.max_zoom)
 		for c in range(0, self.grid_size[0]):
 			for r in range(0, self.grid_size[1]):
+				
+				left = c * TILE_SIZE
+				right = left + TILE_SIZE
+				top = r * TILE_SIZE
+				bottom = top + TILE_SIZE
+				pixel_bounds = (left, right, top, bottom)
+
 				print "Rendering base tile " + str((c, r))
+				print "Bounds: " + str(pixel_bounds)
+				
+				source_tiles = canvas.SourceTilesInBounds(pixel_bounds)
+
+				print source_tiles
+
+				print
+
+
 
 
 
