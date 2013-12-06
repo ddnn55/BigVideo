@@ -30,6 +30,7 @@ class TileRenderer:
 
 	def RenderTilesForAllZoomLevelsUpTo(self, z, z_plus_1_tiles):
 		print "Rendering tiles for zoom level " + str(z)
+		tile_set = RenderTileSet()
 		base_dir = self.output_dir + "/" + str(z)
 		columns = int(math.ceil(float(z_plus_1_tiles.columns) / 2.0))
 		rows = int(math.ceil(float(z_plus_1_tiles.rows) / 2.0))
@@ -53,6 +54,8 @@ class TileRenderer:
 				util.ensure_dir(tile_dir)
 				path = tile_dir + "/0.jpg"
 				tile_image.save(path)
+
+				tile_set.append(RenderTile(tile_dir, (source_bounds * 0.5).int()))
 
 		if z > 0:
 			self.RenderTilesForAllZoomLevelsUpTo(z - 1, tile_set)

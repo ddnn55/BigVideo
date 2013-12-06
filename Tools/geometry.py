@@ -57,6 +57,9 @@ class Point:
     def __repr__(self):
         return "%s(%r, %r)" % (self.__class__.__name__, self.x, self.y)
     
+    def int(self):
+        return Point(int(self.x), int(self.y))
+
     def length(self):
         return math.sqrt(self.x**2 + self.y**2)
     
@@ -159,6 +162,13 @@ class Rect:
     def __init__(self, pt1, pt2):
         """Initialize a rectangle from two points."""
         self.set_points(pt1, pt2)
+
+    def __mul__( self, scalar ):
+        """Scale rectangle"""
+        return Rect(self.top_left() * scalar, self.bottom_right() * scalar)
+
+    def int(self):
+        return Rect(self.top_left().int(), self.bottom_right().int())
 
     def set_points(self, pt1, pt2):
         """Reset the rectangle coordinates."""
