@@ -24,4 +24,4 @@ for z in zooms:
 			destination_path = os.path.join(video_destination_dir, r + ".mp4")
 			cmd = '/usr/bin/env ffmpeg -f image2 -i "' + sequence_path + '/%5d.jpg"  -vcodec libx264 -b 300k "' + destination_path + '"'
 			print cmd
-			#subprocess.call(cmd, shell=True)
+			subprocess.call(cmd, shell=True)

@@ -84,13 +84,18 @@ function zoomed() {
   image.exit()
       .remove();
 
-  image.enter().append("img")
+  image.enter().append("video")//.append("img")
       .attr("class", "tile")
-      //.attr("src", function(d) { return "http://" + ["a", "b", "c", "d"][Math.random() * 4 | 0] + ".tiles.mapbox.com/v3/examples.map-vyofok3q/" + d[2] + "/" + d[0] + "/" + d[1] + ".png"; })
       .on("error", function() { this.style.display = "none"; })
       .attr("src", function(d) {
-        return "xyz_tiles_sequences/" + d[2] + "/" + d[0] + "/" + d[1] + "/00000.jpg";
+        //return "xyz_tiles_sequences/" + d[2] + "/" + d[0] + "/" + d[1] + "/00000.jpg";
+        return "xyz_tiles_video/" + d[2] + "/" + d[0] + "/" + d[1] + ".mp4";
       })
+      .property("autoplay", true)
+      //.on("ended", function() {
+      //  this.play();
+      //})
+      .property("loop", true)
       .style("left", function(d) { return (d[0] << 8) + "px"; })
       .style("top", function(d) { return (d[1] << 8) + "px"; });
 }
