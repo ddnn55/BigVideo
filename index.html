@@ -39,6 +39,7 @@ var width = Math.max(960, window.innerWidth),
     prefix = prefixMatch(["webkit", "ms", "Moz", "O"]);
 
 var tile = d3.geo.tile()
+    .scale(512)
     .size([width, height]);
 
 var projection = d3.geo.mercator();
@@ -84,7 +85,10 @@ function zoomed() {
 
   image.enter().append("img")
       .attr("class", "tile")
-      .attr("src", function(d) { return "http://" + ["a", "b", "c", "d"][Math.random() * 4 | 0] + ".tiles.mapbox.com/v3/examples.map-vyofok3q/" + d[2] + "/" + d[0] + "/" + d[1] + ".png"; })
+      //.attr("src", function(d) { return "http://" + ["a", "b", "c", "d"][Math.random() * 4 | 0] + ".tiles.mapbox.com/v3/examples.map-vyofok3q/" + d[2] + "/" + d[0] + "/" + d[1] + ".png"; })
+      .attr("src", function(d) {
+        return "xyz_tiles_sequences/" + d[2] + "/" + d[0] + "/" + d[1] + "/00000.jpg";
+      })
       .style("left", function(d) { return (d[0] << 8) + "px"; })
       .style("top", function(d) { return (d[1] << 8) + "px"; });
 }
