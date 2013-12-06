@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
 import util
-from canvas import Canvas, RenderTileSet, RenderTile
+from canvas import Canvas, RenderTileSet, RenderTile, TILE_SIZE
 from geometry import Rect, Point
 from PIL import Image
 import math
-
-TILE_SIZE = 512
 
 class TileRenderer:
 
@@ -33,8 +31,9 @@ class TileRenderer:
 	def RenderTilesForAllZoomLevelsUpTo(self, z, z_plus_1_tiles):
 		print "Rendering tiles for zoom level " + str(z)
 		base_dir = self.output_dir + "/" + str(z)
-		columns = math.ceil(float(z_plus_1_tiles.columns) / 2.0)
-		rows = math.ceil(float(z_plus_1_tiles.rows) / 2.0)
+		columns = int(math.ceil(float(z_plus_1_tiles.columns) / 2.0))
+		rows = int(math.ceil(float(z_plus_1_tiles.rows) / 2.0))
+		print "Size: " + str((columns, rows))
 		for c in range(0, columns):
 			for r in range(0, rows):
 				print "Rendering tile " + str((z, c, r))

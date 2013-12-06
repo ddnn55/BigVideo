@@ -5,6 +5,7 @@ from PIL import Image
 import util
 from geometry import Point, Rect
 
+TILE_SIZE = 512
 
 class SourceTile:
 
@@ -35,12 +36,16 @@ class RenderTileSet:
 
 	def __init__(self):
 		self.tiles = []
+		self.columns = 0
+		self.rows = 0
 
 	def __str__(self):
 		return str([str(tile) for tile in self.tiles])
 
 	def append(self, tile):
 		self.tiles.append(tile)
+		self.columns = max(self.columns, tile.bounds.bottom_right().x / TILE_SIZE)
+		self.rows = max(self.rows, tile.bounds.bottom_right().y / TILE_SIZE)
 
 
 class Canvas:
