@@ -45,8 +45,8 @@ var tile = d3.geo.tile()
 var projection = d3.geo.mercator();
 
 var zoom = d3.behavior.zoom()
-    .scale(1 << 12)
-    .scaleExtent([1 << 9, 1 << 23])
+    .scale(1 << 9)
+    .scaleExtent([1 << 9, 1 << 13])
     .translate([width / 2, height / 2])
     .on("zoom", zoomed);
 
