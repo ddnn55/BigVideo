@@ -20,8 +20,19 @@ class SourceTile:
 	def __str__(self):
 		return str(self.pos) + ": " + self.path
 
+	def calculate_frame_count(self):
+		frame_filenames = filter(lambda f: f != ".DS_Store", os.listdir(self.path))
+		frame_numbers = map(lambda f: int(f.split('.')[0]), frame_filenames)
+		return max(frame_numbers)
+
 	def bounds(self):
 		return Rect(self.pos, self.pos + Point(self.width, self.height))
+
+	def frame(self, f):
+		path = self.path + "/" + str(f+1).zfill(5) + ".jpg"
+		#print "Reading source tile: " + path
+		return Image.open(path)
+
 
 class RenderTile:
 
@@ -34,6 +45,11 @@ class RenderTile:
 
 	def first_frame(self):
 		return Image.open(self.path + "/0.jpg")
+
+	def frame(self, f):
+		path = self.path + "/" + str(f).zfill(5) + ".jpg"
+		#print "Reading render tile: " + path
+		return Image.open(path)
 
 class RenderTileSet:
 
@@ -84,6 +100,9 @@ class Canvas:
 
 
 		#print([str(tile) for tile in self.source_tiles])
+
+	def calculate_frame_count(self):
+		return min([tile.calculate_frame_count() for tile in self.source_tiles])
 
 	def SourceTilesInBounds(self, bounds):
 		return filter(lambda t: t.bounds().overlaps(bounds), self.source_tiles)

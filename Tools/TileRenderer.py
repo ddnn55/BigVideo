@@ -5,6 +5,7 @@ from canvas import Canvas, RenderTileSet, RenderTile, TILE_SIZE
 from geometry import Rect, Point
 from PIL import Image
 import math
+import time
 
 class TileRenderer:
 
@@ -24,11 +25,16 @@ class TileRenderer:
 		while pow(2, self.max_zoom) < max(self.grid_size):
 			self.max_zoom = self.max_zoom + 1
 		
-		base_tiles = self.RenderBaseTiles()
-		self.RenderTilesForAllZoomLevelsUpTo(self.max_zoom - 1, base_tiles)
+		frame_count = canvas.calculate_frame_count()
+
+		for f in range(0, frame_count):
+			print "Rendering frame " + str(f)
+			#time.sleep(2)
+			base_tiles = self.RenderBaseTiles(f)
+			self.RenderTilesForAllZoomLevelsUpTo(self.max_zoom - 1, base_tiles, f)
 
 
-	def RenderTilesForAllZoomLevelsUpTo(self, z, z_plus_1_tiles):
+	def RenderTilesForAllZoomLevelsUpTo(self, z, z_plus_1_tiles, frame):
 		print "Rendering tiles for zoom level " + str(z)
 		tile_set = RenderTileSet()
 		base_dir = self.output_dir + "/" + str(z)
@@ -46,22 +52,22 @@ class TileRenderer:
 
 				for source_tile in source_tiles:
 					source_tile_render_pos = source_tile.bounds.top_left() - source_pos
-					tile_image.paste(source_tile.first_frame(), source_tile_render_pos.as_tuple())
+					tile_image.paste(source_tile.frame(frame), source_tile_render_pos.as_tuple())
 
 				tile_image = tile_image.resize((TILE_SIZE, TILE_SIZE), resample=Image.ANTIALIAS)
 
 				tile_dir = base_dir + "/" + str(c) + "/" + str(r)
 				util.ensure_dir(tile_dir)
-				path = tile_dir + "/0.jpg"
+				path = tile_dir + "/" + str(frame).zfill(5) + ".jpg"
 				tile_image.save(path)
 
 				tile_set.append(RenderTile(tile_dir, (source_bounds * 0.5).int()))
 
 		if z > 0:
-			self.RenderTilesForAllZoomLevelsUpTo(z - 1, tile_set)
+			self.RenderTilesForAllZoomLevelsUpTo(z - 1, tile_set, frame)
 
 
-	def RenderBaseTiles(self):
+	def RenderBaseTiles(self, frame):
 		print "Rendering base tiles with max zoom: " + str(self.max_zoom)
 		
 		tile_set = RenderTileSet()
@@ -89,11 +95,11 @@ class TileRenderer:
 				for source_tile in source_tiles:
 					source_pos_in_target_space = source_tile.pos - Point(left, top)
 					print source_pos_in_target_space
-					base_tile_image.paste(source_tile.first_frame, source_pos_in_target_space.as_tuple())
+					base_tile_image.paste(source_tile.frame(frame), source_pos_in_target_space.as_tuple())
 
 				tile_dir = base_dir + "/" + str(c) + "/" + str(r)
 				util.ensure_dir(tile_dir)
-				path = tile_dir + "/0.jpg"
+				path = tile_dir + "/" + str(frame).zfill(5) + ".jpg"
 				base_tile_image.save(path)
 
 				tile_set.append(RenderTile(tile_dir, pixel_bounds))
