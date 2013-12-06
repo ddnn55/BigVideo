@@ -48,7 +48,7 @@ class TileRenderer:
 					source_tile_render_pos = source_tile.bounds.top_left() - source_pos
 					tile_image.paste(source_tile.first_frame(), source_tile_render_pos.as_tuple())
 
-				tile_image.resize((TILE_SIZE, TILE_SIZE), resample=Image.ANTIALIAS)
+				tile_image = tile_image.resize((TILE_SIZE, TILE_SIZE), resample=Image.ANTIALIAS)
 
 				tile_dir = base_dir + "/" + str(c) + "/" + str(r)
 				util.ensure_dir(tile_dir)
