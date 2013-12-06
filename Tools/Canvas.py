@@ -3,6 +3,7 @@
 import os
 from PIL import Image
 import util
+from geometry import Point, Rect
 
 
 class SourceTile:
@@ -17,6 +18,9 @@ class SourceTile:
 
 	def __str__(self):
 		return str(self.pos) + ": " + self.path
+
+	def bounds(self):
+		return Rect(self.pos, self.pos + Point(self.width, self.height))
 
 class Canvas:
 
@@ -40,7 +44,7 @@ class Canvas:
 				x = c * source_tile.width
 				y = r * source_tile.height
 
-				source_tile.pos = (x, y)
+				source_tile.pos = Point(x, y)
 
 				self.size = (max(self.size[0], x + source_tile.width), max(self.size[1], y + source_tile.height))
 				
@@ -50,7 +54,7 @@ class Canvas:
 		#print([str(tile) for tile in self.source_tiles])
 
 	def SourceTilesInBounds(self, bounds):
-		return filter(lambda t: intersects(t.bounds(), bounds), self.source_tiles)
+		return filter(lambda t: t.bounds().overlaps(bounds), self.source_tiles)
 
 if __name__ == '__main__':
 	canvas = Canvas()

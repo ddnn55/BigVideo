@@ -2,6 +2,7 @@
 
 import util
 from canvas import Canvas
+from geometry import Rect, Point
 
 TILE_SIZE = 512
 
@@ -32,7 +33,7 @@ class TileRenderer:
 				right = left + TILE_SIZE
 				top = r * TILE_SIZE
 				bottom = top + TILE_SIZE
-				pixel_bounds = (left, right, top, bottom)
+				pixel_bounds = Rect(Point(left, top), Point(right, bottom))
 
 				print "Rendering base tile " + str((c, r))
 				print "Bounds: " + str(pixel_bounds)
