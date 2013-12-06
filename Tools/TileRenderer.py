@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import util
-from canvas import Canvas
+from canvas import Canvas, RenderTileSet, RenderTile
 from geometry import Rect, Point
 from PIL import Image
 import math
@@ -55,10 +55,14 @@ class TileRenderer:
 				path = tile_dir + "/0.jpg"
 				base_tile_image.save(path)
 
+		if z > 0:
+			self.RenderTilesForAllZoomLevelsUpTo(z - 1, tile_set)
+
 
 	def RenderBaseTiles(self):
 		print "Rendering base tiles with max zoom: " + str(self.max_zoom)
 		
+		tile_set = RenderTileSet()
 		base_dir = self.output_dir + "/" + str(self.max_zoom)
 
 		for c in range(0, self.grid_size[0]):
@@ -89,7 +93,13 @@ class TileRenderer:
 				util.ensure_dir(tile_dir)
 				path = tile_dir + "/0.jpg"
 				base_tile_image.save(path)
+
+				tile_set.append(RenderTile(path, pixel_bounds))
+
 				print
+
+		print "Base render made tile set: " + str(tile_set)
+		return tile_set
 
 
 

@@ -22,6 +22,27 @@ class SourceTile:
 	def bounds(self):
 		return Rect(self.pos, self.pos + Point(self.width, self.height))
 
+class RenderTile:
+
+	def __init__(self, path, bounds):
+		self.path = path
+		self.bounds = bounds
+
+	def __str__(self):
+		return str(self.bounds) + ": " + self.path
+
+class RenderTileSet:
+
+	def __init__(self):
+		self.tiles = []
+
+	def __str__(self):
+		return str([str(tile) for tile in self.tiles])
+
+	def append(self, tile):
+		self.tiles.append(tile)
+
+
 class Canvas:
 
 	def __init__(self):
