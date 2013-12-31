@@ -99,7 +99,8 @@ function zoomed() {
       .attr('id', function(d) { return 'layer-zoom-' + d.z })
 
   layer
-      .style(prefix + "transform", function(d) { return matrix3d(d.scale, d.translate) });
+      .style(prefix + "transform", function(d) { return matrix3d(d.scale, d.translate) })
+      .style("z-index", function(d) { return -d.z });
 
   
   var image = layer
