@@ -31,13 +31,14 @@ body {
 
 </style>
 <body>
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3.v3.min.js"></script>
 <script src="tile.js"></script>
 <script>
 
 var width = Math.max(960, window.innerWidth),
     height = Math.max(500, window.innerHeight),
-    prefix = prefixMatch(["webkit", "ms", "Moz", "O"]);
+    prefix = prefixMatch(["webkit", "ms", "Moz", "O"]),
+    prevZ = null;
 
 var tile = d3.geo.tile()
     .size([width, height])
@@ -67,10 +68,21 @@ var info = map.append("div")
 zoomed();
 
 function zoomed() {
+
   var tiles = tile
       .scale(zoom.scale())
       .translate(zoom.translate())
+      .zoomDelta(0)
       ();
+
+  var parentTiles = tile
+      .zoomDelta(-1)
+      ();
+
+  if(prevZ != tiles.z) {
+    console.log(tiles, parentTiles);
+    prevZ = tiles.z;
+  }
 
   var image = layer
       .style(prefix + "transform", matrix3d(tiles.scale, tiles.translate))
@@ -82,7 +94,8 @@ function zoomed() {
 
   image.enter().append("video")
       .attr("class", "tile")
-      .on("error", function() { this.style.display = "none"; })
+      .on("error", function() { this.style.display = "none"; }) // remove() instead?
+      .on("loadeddata", function() { /* TODO track tile child load count, remove full parent */ })
       .attr("src", function(d) {
         return "xyz_tiles_video/" + d[2] + "/" + d[0] + "/" + d[1] + ".mp4";
       })
