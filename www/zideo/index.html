@@ -38,7 +38,8 @@ body {
 var width = Math.max(960, window.innerWidth),
     height = Math.max(500, window.innerHeight),
     prefix = prefixMatch(["webkit", "ms", "Moz", "O"]),
-    prevZ = null;
+    prevZ = null,
+    showParents = false;
 
 var tile = d3.geo.tile()
     .size([width, height])
@@ -83,6 +84,9 @@ function zoomed() {
     console.log(tiles, parentTiles);
     prevZ = tiles.z;
   }
+
+  if(showParents)
+    tiles = parentTiles;
 
   var image = layer
       .style(prefix + "transform", matrix3d(tiles.scale, tiles.translate))
