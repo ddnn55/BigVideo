@@ -32,7 +32,7 @@ body {
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="d3.geo.tileHack.js"></script>
+<script src="tile.js"></script>
 <script>
 
 var width = Math.max(960, window.innerWidth),
@@ -40,10 +40,8 @@ var width = Math.max(960, window.innerWidth),
     prefix = prefixMatch(["webkit", "ms", "Moz", "O"]);
 
 var tile = d3.geo.tile()
-    .scale(512)
-    .size([width, height]);
-
-var projection = d3.geo.mercator();
+    .size([width, height])
+    .tileSizePower(Math.log(512) / Math.log(2));
 
 var zoom = d3.behavior.zoom()
     .scale(1 << 9)
@@ -58,7 +56,7 @@ var map = d3.select("body").append("div")
     .call(zoom)
     .on("mouseover", function() { this.style.cursor = prefix + "grab" })
     .on("mousedown", function() { this.style.cursor = prefix + "grabbing" })
-    .on("mouseup", function() { this.style.cursor = prefix + "grab" })
+    .on("mouseup",   function() { this.style.cursor = prefix + "grab" })
 
 var layer = map.append("div")
     .attr("class", "layer");
@@ -74,10 +72,6 @@ function zoomed() {
       .translate(zoom.translate())
       ();
 
-  projection
-      .scale(zoom.scale() / 2 / Math.PI)
-      .translate(zoom.translate());
-
   var image = layer
       .style(prefix + "transform", matrix3d(tiles.scale, tiles.translate))
     .selectAll(".tile")
@@ -86,11 +80,10 @@ function zoomed() {
   image.exit()
       .remove();
 
-  image.enter().append("video")//.append("img")
+  image.enter().append("video")
       .attr("class", "tile")
       .on("error", function() { this.style.display = "none"; })
       .attr("src", function(d) {
-        //return "xyz_tiles_sequences/" + d[2] + "/" + d[0] + "/" + d[1] + "/00000.jpg";
         return "xyz_tiles_video/" + d[2] + "/" + d[0] + "/" + d[1] + ".mp4";
       })
       .property("autoplay", true)

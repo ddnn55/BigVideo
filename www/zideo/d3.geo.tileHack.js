@@ -5,9 +5,9 @@ d3.geo.tile = function() {
       zoomDelta = 0;
 
   function tile() {
-    var z = Math.max(Math.log(scale) / Math.LN2 - 9, 0),
+    var z = Math.max(Math.log(scale) / Math.LN2 - 8, 0),
         z0 = Math.round(z + zoomDelta),
-        k = Math.pow(2, z - z0 + 9),
+        k = Math.pow(2, z - z0 + 8),
         origin = [(translate[0] - scale / 2) / k, (translate[1] - scale / 2) / k],
         tiles = [],
         cols = d3.range(Math.max(0, Math.floor(-origin[0])), Math.max(0, Math.ceil(size[0] / k - origin[0]))),
@@ -18,15 +18,6 @@ d3.geo.tile = function() {
         tiles.push([x, y, z0]);
       });
     });
-
-    // hack around too much clipping
-    /*rows.forEach(function(y) {
-      tiles.push([Math.min(cols) - 1, y, z0]);
-    });
-    cols.forEach(function(x) {
-      tiles.push([x, Math.min(rows) - 1, z0]);
-    });*/
-    // end hack
 
     tiles.translate = origin;
     tiles.scale = k;
