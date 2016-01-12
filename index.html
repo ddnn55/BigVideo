@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  margin: 0;
+  background-color: black;
+}
+
+.map {
+  position: relative;
+  overflow: hidden;
+}
+
+.layer {
+  position: absolute;
+}
+
+.tile {
+  pointer-events: none;
+  position: absolute;
+  width: 256px;
+  height: 256px;
+}
+
+.info {
+  color: white;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 1000;
+  background-color: black;
+}
+
+</style>
+<body>
+<script src="d3.v3.min.js"></script>
+<script src="tile.js"></script>
+<script>
+
+var LOAD_DELAY = 2;
+
+var width = Math.max(960, window.innerWidth),
+    height = Math.max(500, window.innerHeight),
+    prefix = prefixMatch(["webkit", "ms", "Moz", "O"]),
+    prevZ = null,
+    showParents = false;
+
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+var tile = d3.geo.tile()
+    .size([width, height])
+    .tileSizePower(Math.log(512) / Math.log(2));
+
+var zoom = d3.behavior.zoom()
+    .scale(1 << 9)
+    .scaleExtent([1 << 9, 1 << 14])
+    .translate([width / 2, height / 2])
+    .on("zoom", zoomed);
+
+var map = d3.select("body").append("div")
+    .attr("class", "map")
+    .style("width", width + "px")
+    .style("height", height + "px")
+    .call(zoom)
+    .on("mouseover", function() { this.style.cursor = prefix + "grab" })
+    .on("mousedown", function() { this.style.cursor = prefix + "grabbing" })
+    .on("mouseup",   function() { this.style.cursor = prefix + "grab" })
+
+var layers = map.append("div")
+    .attr("class", "layers");
+
+var info = map.append("div")
+    .attr("class", "info");
+
+function drawInfo() {
+  var playheadTime = info.selectAll('div')
+      .data(d3.selectAll('video')[0]);
+
+  playheadTime
+    .enter().append('div');
+
+  playheadTime
+      .text(function(v) { return d3.select(v).attr('id') + ': ' + v.currentTime })
+  
+  playheadTime
+    .exit()
+      .remove();
+
+  window.requestAnimationFrame(drawInfo);
+};
+window.requestAnimationFrame(drawInfo);
+
+// master video is the authority on time
+var master = d3.select('body').append("video")
+    .attr('id', 'master')
+    .attr('src', "xyz_tiles_video/0/0/0.mp4")
+    .style('display', 'none')
+    .property('autoplay', true)
+    .property('loop', true);
+
+master = master[0][0]; // want to read .currentTime later. is there a more d3-ic way to do this?
+
+zoomed();
+
+function zoomed() {
+
+  var tiles = tile
+      .scale(zoom.scale())
+      .translate(zoom.translate())
+      .zoomDelta(0)
+      ();
+
+  var parentTiles = tile
+      .zoomDelta(-1)
+      ();
+
+  if(prevZ != tiles.z) {
+    console.log(tiles, parentTiles);
+    prevZ = tiles.z;
+  }
+
+  var layeredTiles = [parentTiles, tiles];
+
+  var layer = layers
+    .selectAll('.layer')
+      .data(layeredTiles, function(d) { return d.z });
+
+  layer.exit()
+      .remove();
+
+  layer.enter().append("div")
+      .attr('class', 'layer')
+      .attr('id', function(d) { return 'layer-zoom-' + d.z })
+
+  layer
+      .style(prefix + "transform", function(d) { return matrix3d(d.scale, d.translate) })
+      .style("z-index", function(d) { return -d.z });
+  
+  var image = layer
+    .selectAll(".tile")
+      .data(function(d) { return d; }, tileId);
+
+  image.exit()
+      .remove();
+
+  image.enter().append("video")
+      .attr("class", "tile")
+      .attr("id", function(d) { return tileId(d) })
+      /*.on("error", function(e) {
+        // using this to hide out of bounds tiles
+        // should instead explicitly not request out of bounds tiles
+        this.style.display = "none";
+      })*/
+      .style('display', 'none')
+      .on("loadedmetadata", function(d) {
+        var _this = this;
+        this.currentTime = master.currentTime + LOAD_DELAY;
+        window.setTimeout(function() {
+          _this.style.display = "block";
+          _this.play();
+        }, LOAD_DELAY * 1000);
+      })
+      .on("loadeddata", function(d) {
+        // TODO track tile child load count, remove full parent
+        //  or if zooming out, remove children when parent loads... hmm... how to handle this...
+      })
+      .attr("src", function(d) {
+        return "xyz_tiles_video/" + d[2] + "/" + d[0] + "/" + d[1] + ".mp4";
+      })
+      .property("autoplay", false)
+      .property("loop", true) // requires web server that serves file regions
+      .style("left", function(d) { return (d[0] << 8) + "px"; })
+      .style("top", function(d) { return (d[1] << 8) + "px"; });  
+}
+
+function tileId(tile) {
+  return "tile-" + tile[2] + "-" + tile[0] + "-" + tile[1];
+}
+
+function parentTile(tile) {
+  return d3.select(tileId([ Math.floor(tile[0] / 2), Math.floor(tile[1] / 2), tile[2] - 1 ]));
+}
+
+function matrix3d(scale, translate) {
+  var k = scale / 256, r = scale % 1 ? Number : Math.round;
+  return "matrix3d(" + [k, 0, 0, 0, 0, k, 0, 0, 0, 0, k, 0, r(translate[0] * scale), r(translate[1] * scale), 0, 1 ] + ")";
+}
+
+function prefixMatch(p) {
+  var i = -1, n = p.length, s = document.body.style;
+  while (++i < n) if (p[i] + "Transform" in s) return "-" + p[i].toLowerCase() + "-";
+  return "";
+}
+
+</script>
