@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <style>
 
 body {
@@ -33,10 +35,23 @@ body {
 }
 
 </style>
+</head>
 <body>
+
+<div id="ios-warning" style="display:none; background-color: white; z-index: 10000;">
+  <h1>Sorry, at time of writing, iOS does not support JavaScript control of HTML5 video!!</h1>
+</div>
+
 <script src="d3.v3.min.js"></script>
 <script src="tile.js"></script>
 <script>
+
+var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+if(iOS) {
+  console.debug('showing iOS warning');
+  document.querySelector('#ios-warning').style.display = 'block';
+}
 
 var LOAD_DELAY = 2;
 
@@ -83,7 +98,7 @@ function drawInfo() {
 
   playheadTime
       .text(function(v) { return d3.select(v).attr('id') + ': ' + v.currentTime })
-  
+
   playheadTime
     .exit()
       .remove();
@@ -137,7 +152,7 @@ function zoomed() {
   layer
       .style(prefix + "transform", function(d) { return matrix3d(d.scale, d.translate) })
       .style("z-index", function(d) { return -d.z });
-  
+
   var image = layer
     .selectAll(".tile")
       .data(function(d) { return d; }, tileId);
@@ -172,7 +187,7 @@ function zoomed() {
       .property("autoplay", false)
       .property("loop", true) // requires web server that serves file regions
       .style("left", function(d) { return (d[0] << 8) + "px"; })
-      .style("top", function(d) { return (d[1] << 8) + "px"; });  
+      .style("top", function(d) { return (d[1] << 8) + "px"; });
 }
 
 function tileId(tile) {
