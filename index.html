@@ -55,8 +55,8 @@ if(iOS) {
 
 var LOAD_DELAY = 2;
 
-var width = Math.max(960, window.innerWidth),
-    height = Math.max(500, window.innerHeight),
+var width = window.innerWidth,
+    height = window.innerHeight,
     prefix = prefixMatch(["webkit", "ms", "Moz", "O"]),
     prevZ = null,
     showParents = false;
