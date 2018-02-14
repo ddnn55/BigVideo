@@ -1,0 +1,6 @@
+data
+venv
+
+*.swp
+*.swo
+*.pyc

@@ -5,7 +5,7 @@ from PIL import Image
 import util
 from geometry import Point, Rect
 
-TILE_SIZE = 512
+TILE_SIZE = 1024
 
 class SourceTile:
 
